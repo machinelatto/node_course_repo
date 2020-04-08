@@ -3,12 +3,9 @@ const Product = require('../models/product')
 exports.getAddProduct = (req, res, next) => {
     //  envia o arquivo html ou ejs
     // com a página add-product
-    res.render('admin/add-product',{
+    res.render('admin/edit-product',{
       pageTitle: 'Add Product',
       path: '/admin/add-product',
-      formsCSS: true,
-      productCSS: true,
-      activeAddProduct: true
     })
 }
 
@@ -24,6 +21,19 @@ exports.postAddProduct = (req, res, next) => {
     // quando recebe uma requisição POST para /add-product redireciona para a raiz
     res.redirect('/');
 }
+
+
+exports.getEditProduct = (req, res, next) => {
+    const editMode = req.query.edit
+    
+    res.render('admin/edit-product',{
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      editing: editMode
+    })
+}
+
+
 
 exports.getProducts = (req, res, next) => {
     Product.fetchAll((products)=> {
