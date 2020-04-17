@@ -1,29 +1,24 @@
-// import para funções que manipulam path para achar os arquivos corretos
-const path = require('path'); 
+const path = require('path');
 
-// framework para trabalhar com middleware
-// facilita muito a logica das routes e manipulação de dados e arquivos
 const express = require('express');
 
-// importa as funções controller
-const adminController = require('../controllers/admin')
+const adminController = require('../controllers/admin');
 
 const router = express.Router();
 
-
 // /admin/add-product => GET
-router.get('/add-product', adminController.getAddProduct)
+router.get('/add-product', adminController.getAddProduct);
 
-router.get('/products', adminController.getProducts)
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
 
 // /admin/add-product => POST
-router.post('/add-product', adminController.postAddProduct)
+router.post('/add-product', adminController.postAddProduct);
 
-router.get('/edit-product/:productId', adminController.getEditProduct)
+router.get('/edit-product/:productId', adminController.getEditProduct);
 
-router.post('/edit-product/', adminController.postEditProduct)
+router.post('/edit-product', adminController.postEditProduct);
 
-router.post('/delete-product', adminController.postDeleteProduct)
+router.post('/delete-product', adminController.postDeleteProduct);
 
 module.exports = router;
-
