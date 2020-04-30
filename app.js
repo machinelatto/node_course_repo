@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('5baa2528563f16379fc8a610')
+  User.findById('5e9dfb58aaf0b242285688ef')
     .then(user => {
       req.user = new User(user.name, user.email, user.cart, user._id);
       next();
@@ -34,8 +34,7 @@ app.use(errorController.get404);
 
 mongoose
   .connect(
-    'mongodb+srv://maximilian:9u4biljMQc4jjqbe@cluster0-ntrwp.mongodb.net/test?retryWrites=true'
-  )
+    "mongodb+srv://mateus:y9gjs9zs@cluster0-1gqwa.gcp.mongodb.net/test?retryWrites=true&w=majority")
   .then(result => {
     app.listen(3000);
   })
