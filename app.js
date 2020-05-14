@@ -34,7 +34,10 @@ app.use(errorController.get404);
 
 mongoose
   .connect(
-    "mongodb+srv://mateus:y9gjs9zs@cluster0-1gqwa.gcp.mongodb.net/shop?retryWrites=true&w=majority")
+    "mongodb+srv://mateus:y9gjs9zs@cluster0-1gqwa.gcp.mongodb.net/shop?retryWrites=true&w=majority",
+    { useNewUrlParser: true,
+      useUnifiedTopology: true 
+    })
   .then(result => {
     User.findOne().then(user=>{
       if(!user){
@@ -46,8 +49,8 @@ mongoose
         user.save()
       }
     })
-    app.listen(3000);
+    app.listen(8080);
   })
   .catch(err => {
-    // console.log(err);
+    console.log(err);
   });
