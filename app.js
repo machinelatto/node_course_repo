@@ -3,11 +3,19 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
+MONGODB_URI = "mongodb+srv://mateus:y9gjs9zs@cluster0-1gqwa.gcp.mongodb.net/shop";
+
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'sessions'
+});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -18,14 +26,23 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'my secret',
+  resave: false,
+  saveUninitialized: false,
+  store: store
+}))
 
 app.use((req, res, next) => {
-  User.findById('5eab13e76cf64c2e3452106d')
-    .then(user => {
-      req.user = user;
-      next();
-    })
-    .catch(err => console.log(err));
+  if(!req.session.user){
+    return next()
+  }
+  User.findById(req.session.user._id)
+  .then(user => {
+    req.user = user;
+    next()
+  })
+  .catch(err => console.log(err));
 });
 
 app.use('/admin', adminRoutes);
@@ -36,7 +53,7 @@ app.use(errorController.get404);
 
 mongoose
   .connect(
-    "mongodb+srv://mateus:y9gjs9zs@cluster0-1gqwa.gcp.mongodb.net/shop?retryWrites=true&w=majority",
+    MONGODB_URI,
     { useNewUrlParser: true,
       useUnifiedTopology: true 
     })
