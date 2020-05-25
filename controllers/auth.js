@@ -1,9 +1,11 @@
-const crypto = require('crypto')
+const crypto = require('crypto');
 // Name	Blanca Dickens
 // Username	blanca11@ethereal.email (also works as a real inbound email address)
 // Password	D8Cdn3vqrszFcqPDRZ
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer')
+
+const {validationResult} = require('express-validator')
 
 const User = require('../models/user');
 
@@ -29,12 +31,24 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
+    errorMessage: false,
+    oldInput:{email:"",password:"",confirmPassword:""},
+    validateErrors: []
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessage:errors.array()[0].msg
+    });
+  }
 
   User.findOne({email: email})
   .then(user => {
@@ -65,13 +79,20 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword =req.body.confirmPassword;
-  User.findOne({email: email})
-    .then(userDoc => {
-      if(userDoc){
-        return res.redirect('/signup');
-      }
-      return bcrypt.hash(password,12)
+  const confirmPassword = req.body.password;
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    console.log('Hey:')
+    console.log(errors.array())
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage:errors.array()[0].msg,
+      oldInput:{email:email,password:password,confirmPassword:confirmPassword},
+      validateErrors: errors.array()
+    });
+  }
+  bcrypt.hash(password,12)
         .then(hashedPassword=>{
           const user = new User({
             email: email,
@@ -92,10 +113,6 @@ exports.postSignup = (req, res, next) => {
         .catch(err => {
           console.log(err)
         })
-    })
-    .catch(err=>{
-      console.log(err)
-    });
 };
 
 exports.postLogout = (req, res, next) => {
