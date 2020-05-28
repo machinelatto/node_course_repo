@@ -7,7 +7,8 @@ exports.getAddProduct = (req, res, next) => {
     path: '/admin/add-product',
     editing: false,
     hasError: false,
-    errorMessage: null
+    errorMessage: null,
+    validateErrors: []
   });
 };
 
@@ -30,7 +31,8 @@ exports.postAddProduct = (req, res, next) => {
         description: description,
         imageUrl: imageUrl,
       },
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      validateErrors: errors.array()
     });
   }
 
@@ -70,7 +72,8 @@ exports.getEditProduct = (req, res, next) => {
         editing: editMode,
         product: product,
         hasError: false,
-        errorMessage: null
+        errorMessage: null,
+        validateErrors: []
       });
     })
     .catch(err => console.log(err));
@@ -95,8 +98,10 @@ exports.postEditProduct = (req, res, next) => {
         price: updatedPrice,
         description: updatedDesc,
         imageUrl: updatedImageUrl,
+        _id: prodId
       },
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      validateErrors: errors.array()
     });
   }
 
